@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="cs" translate="no"><head><meta charset="utf-8"><meta name="google" content="notranslate"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pirátský poklad</title><link rel="stylesheet" href="fonts.css"><link rel="stylesheet" href="style.css"></head>
+<body>
+<div id="stage"><div id="machine">
+  <div class="win-bg"></div>
+  <div class="reels-wrap" id="reelsWrap"><canvas id="reels" width="1000" height="600"></canvas><canvas id="fx" width="1000" height="600"></canvas>
+    <div id="bigwin" class="bigwin hidden"><div class="bw-title" id="bwTitle">VELKÁ VÝHRA!</div><div class="bw-amt" id="bwAmt">0</div></div>
+  </div>
+  <img class="frame-img" src="img/frame.png" alt="">
+  <div class="jps"><div class="jp t0"><label>Bronz</label><b id="jp0">0</b></div><div class="jp t1"><label>Stříbro</label><b id="jp1">0</b></div><div class="jp t2"><label>Zlato</label><b id="jp2">0</b></div><div class="jp t3"><label>Diamant</label><b id="jp3">0</b></div></div>
+  <div id="fsBar" class="fsbar hidden">VOLNÉ OTÁČKY <b id="fsLeft">0</b> · NÁSOBIČ <b id="fsMult">x1</b></div>
+  <div class="lbl" style="left:210px;width:152px">KREDIT</div>
+  <div class="lbl" style="left:411px;width:150px">SÁZKA</div>
+  <div class="lbl" style="left:776px;width:129px">VÝHRA</div>
+  <div class="lbl" style="left:942px;width:164px">INFO</div>
+  <div id="balance" class="lcd" style="left:212px;width:148px">1 000,00 Kč</div>
+  <div id="bet" class="lcd" style="left:413px;width:146px">20,00 Kč</div>
+  <div id="win" class="lcd win" style="left:778px;width:125px">0,00 Kč</div>
+  <div id="msg" class="lcd msg" style="left:944px;width:160px">Hodně štěstí!</div>
+  <button id="betMinus" class="ibtn round" style="left:425px"><img src="img/btn_minus.png" alt="−"></button>
+  <button id="betPlus" class="ibtn round" style="left:491px"><img src="img/btn_plus.png" alt="+"></button>
+  <button id="sndBtn" class="brassbtn" style="left:965px" title="Zvuky zap/vyp"><svg viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#3a1a02"/><path class="w" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" stroke="#3a1a02" stroke-width="2" fill="none" stroke-linecap="round"/><path class="x" d="M16 9l6 6M22 9l-6 6" stroke="#8a1000" stroke-width="2.4" stroke-linecap="round"/></svg></button><button id="musBtn" class="brassbtn" style="left:1035px" title="Hudba zap/vyp"><svg viewBox="0 0 24 24"><path d="M9 17V5l11-2v12" stroke="#3a1a02" stroke-width="2" fill="none"/><circle cx="6.5" cy="17.5" r="3" fill="#3a1a02"/><circle cx="17.5" cy="15.5" r="3" fill="#3a1a02"/><path class="x" d="M3 3l18 18" stroke="#8a1000" stroke-width="2.4" stroke-linecap="round"/></svg></button>
+  <button id="turboBtn" class="demobtn turbo" title="TURBO – rychlé točení (klávesa T)">TURBO</button>
+  <button id="demoBtn" class="demobtn" title="DEMO – spustit funkci (klávesy: V vlna, K kraken, J jackpot, F volné otáčky, B kopání)">DEMO</button>
+  <div id="demoMenu" class="demomenu hidden"><div class="dmh">Spustit při další otáčce:</div>
+    <button data-f="vlna">Přílivová vlna <kbd>V</kbd></button><button data-f="kraken">Útok krakena <kbd>K</kbd></button><button data-f="jackpot">Jackpot <kbd>J</kbd></button><button data-f="fs">Volné otáčky <kbd>F</kbd></button><button data-f="bonus">Vykopej poklad <kbd>B</kbd></button></div>
+  <canvas id="coins" width="1335" height="246"></canvas><div class="smoke"><i></i><i></i><i></i><i></i></div>
+  <button id="spin" class="startbtn"><img src="img/start.png" alt="START"><span>START</span></button>
+  <button id="info" class="ibtn rect" style="left:70px"><img src="img/btn_red.png" alt=""><span>MENU</span></button>
+  <button id="auto" class="ibtn rect auto" style="left:1105px"><img src="img/btn_green.png" alt=""><span>AUTO START<small id="autoState">VYP</small></span></button>
+  <canvas id="shower" width="1335" height="1030"></canvas><div id="flash"></div>
+  <div class="disclaimer">Pouze virtuální kredity pro zábavu (zobrazeno jako Kč) – žádné skutečné peníze. RTP ≈ 96,2 %.</div>
+</div></div>
+
+<div id="pickModal" class="modal hidden"><div class="dialog parchment">
+  <h2>Vykopej poklad!</h2><p>Kopej na ostrově, dokud nenarazíš na lebku. Každý poklad se přičte k výhře.</p>
+  <div id="pickGrid" class="pickgrid"></div>
+  <div class="picktotal">Bonus: <b id="pickTotal">0</b></div>
+  <button id="pickDone" class="gbtn green hidden">POKRAČOVAT</button>
+</div></div>
+
+<div id="infoModal" class="modal hidden"><div class="dialog parchment wide">
+  <h2>Výherní tabulka</h2><div id="payGrid" class="paygrid"></div>
+  <div class="rules">
+    <p><b>Pirátská vlajka (WILD)</b> se objevuje jen na válcích 2, 3 a 4, nahrazuje všechny symboly kromě Mapy pokladu a vždy se roztáhne přes celý válec.</p>
+    <p><b>Mapa pokladu (SCATTER)</b>: 3 a více kdekoliv spustí <b>10 volných otáček</b> (lze znovu spustit +10). Násobič začíná na x1 a po každé výherní volné otáčce roste o +1. Scatter platí 3× = 1×, 4× = 10×, 5× = 50× celkové sázky.</p>
+    <p><b>Vykopej poklad</b>: 3 Truhly kdekoliv na válcích 1, 3 a 5 (v základní hře) spustí bonusovou hru. Vybírej místa, dokud nenajdeš lebku (3 lebky, 9 pokladů).</p>
+    <p>Hraje se na 20 pevných výherních liniích zleva doprava. Výplaty v tabulce jsou v kreditech pro aktuální sázku. </p>
+    <p><b>Útok krakena</b>: náhodně v základní hře (přibližně 1× za 70 otáček) chapadlo krakena promění 3–6 náhodných pozic na válcích 2–5 v symboly WILD (nerozšiřují se). Otáčka se poté vyhodnotí bez dalšího poplatku.</p>
+    <p><b>Přílivová vlna</b>: po nevýherní otáčce v základní hře může (asi v 1 z 50 případů) přes válce proplout pirátská loď. Vlna smete všechny válce a následuje bezplatné opakované roztočení se zaručenou výhrou.</p>
+    <p><b>Jackpot Kapitánova truhla</b> (mystery progresivní): 4 úrovně – Bronz, Stříbro, Zlato, Diamant (výchozí hodnoty 20×, 100×, 500× a 2500× minimální sázky). Z každé sázky jde 1 % do jackpotů. Při každé otáčce základní hry mohou na válcích 1, 3 a 5 přistát tři zlaté jackpotové truhly (šance roste s výší sázky). Jakmile přistanou všechny tři, scéna jackpotu se spustí sama: lucerny zablikají, truhla se otevře, vytryskne poklad a výhra (MINI = Bronz, MINOR = Stříbro, MAJOR = Zlato, GRAND = Diamant) se připíše do pole VÝHRA. Hráč nic nevybírá; animaci lze zkrátit jen tlačítkem START nebo mezerníkem.</p>
+    <p>Celková teoretická návratnost (RTP) ≈ 96,2 % (včetně jackpotu), volatilita střední.</p>
+    <p><b>Demo režim</b>: tlačítko DEMO nebo klávesy <b>V</b> = Přílivová vlna, <b>K</b> = Útok krakena, <b>J</b> = Jackpot (střídá MINI → MAJOR → GRAND), <b>F</b> = Volné otáčky, <b>B</b> = Vykopej poklad, <b>T</b> = Turbo, mezerník/START během točení = okamžité zastavení (přeskočí i animace výhry) – funkce se spustí při další otáčce (také přes adresu, např. <i>index.html?demo=vlna</i>).</p>
+    <canvas id="linesCanvas" width="900" height="220"></canvas>
+  </div>
+  <button id="infoClose" class="gbtn blue">ZAVŘÍT</button>
+</div></div>
+<div id="banner" class="banner hidden"></div>
+<script src="config.js"></script><script src="engine.js"></script><script src="art.js"></script><script src="audio.js"></script><script src="game.js"></script>
+</body></html>
