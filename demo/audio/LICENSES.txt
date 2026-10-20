@@ -1,0 +1,1 @@
+Všechny zvuky a hudba v této hře jsou generovány procedurálně za běhu pomocí Web Audio API (soubor audio.js). Nepoužívají se žádné externí ani chráněné zvukové soubory. All sounds are procedurally synthesized (original work), no third-party audio assets.
